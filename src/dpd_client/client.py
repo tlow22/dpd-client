@@ -52,10 +52,17 @@ class DPDClient:
         timeout: float = 15.0,
         retries: int = 3,
         user_agent: str | None = None,
+        cache_ttl: float | int | None = None,
     ) -> None:
         self.base_url = base_url.rstrip("/") + "/"
         self.default_lang = lang
-        self._http = HTTPClient(self.base_url, timeout=timeout, max_retries=retries, user_agent=user_agent)
+        self._http = HTTPClient(
+            self.base_url,
+            timeout=timeout,
+            max_retries=retries,
+            user_agent=user_agent,
+            cache_ttl=cache_ttl,
+        )
 
     def close(self) -> None:
         self._http.close()
@@ -165,10 +172,17 @@ class AsyncDPDClient:
         timeout: float = 15.0,
         retries: int = 3,
         user_agent: str | None = None,
+        cache_ttl: float | int | None = None,
     ) -> None:
         self.base_url = base_url.rstrip("/") + "/"
         self.default_lang = lang
-        self._http = AsyncHTTPClient(self.base_url, timeout=timeout, max_retries=retries, user_agent=user_agent)
+        self._http = AsyncHTTPClient(
+            self.base_url,
+            timeout=timeout,
+            max_retries=retries,
+            user_agent=user_agent,
+            cache_ttl=cache_ttl,
+        )
 
     async def aclose(self) -> None:
         await self._http.aclose()

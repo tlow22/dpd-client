@@ -32,11 +32,14 @@ class HTTPClient:
         max_retries: int = 3,
         user_agent: str | None = None,
         headers: dict[str, str] | None = None,
+        cache_ttl: float | int | None = None,
     ) -> None:
         self.base_url = base_url.rstrip("/") + "/"
         self.timeout = timeout
         self.max_retries = max_retries
         self._client = httpx.Client(base_url=self.base_url, timeout=timeout)
+        self._cache_ttl = float(cache_ttl) if cache_ttl else 0.0
+        self._cache: dict[str, tuple[float, Any]] = {}
         default_headers = {"Accept": "application/json"}
         if user_agent:
             default_headers["User-Agent"] = user_agent
@@ -72,9 +75,20 @@ class HTTPClient:
             raise DPDHTTPError(-1, str(exc)) from exc
 
     def get_json(self, url: str, params: dict[str, Any] | None = None) -> Any:
+        key = _cache_key(url, params)
+        if self._cache_ttl:
+            hit = self._cache.get(key)
+            if hit and hit[0] >= _now():
+                return hit[1]
         resp = self._request(url, params=params)
+        if 400 <= resp.status_code < 500:
+            req_url = str(resp.request.url) if getattr(resp, "request", None) else None
+            raise DPDHTTPError(resp.status_code, resp.text, url=req_url)
         try:
-            return resp.json()
+            data = resp.json()
+            if self._cache_ttl:
+                self._cache[key] = (_now() + self._cache_ttl, data)
+            return data
         except json.JSONDecodeError as exc:  # pragma: no cover
             raise DPDDecodeError("Failed to decode JSON response") from exc
 
@@ -90,11 +104,14 @@ class AsyncHTTPClient:
         max_retries: int = 3,
         user_agent: str | None = None,
         headers: dict[str, str] | None = None,
+        cache_ttl: float | int | None = None,
     ) -> None:
         self.base_url = base_url.rstrip("/") + "/"
         self.timeout = timeout
         self.max_retries = max_retries
         self._client = httpx.AsyncClient(base_url=self.base_url, timeout=timeout)
+        self._cache_ttl = float(cache_ttl) if cache_ttl else 0.0
+        self._cache: dict[str, tuple[float, Any]] = {}
         default_headers = {"Accept": "application/json"}
         if user_agent:
             default_headers["User-Agent"] = user_agent
@@ -128,9 +145,20 @@ class AsyncHTTPClient:
         raise DPDHTTPError(-1, str(last_exc)) from last_exc
 
     async def get_json(self, url: str, params: dict[str, Any] | None = None) -> Any:
+        key = _cache_key(url, params)
+        if self._cache_ttl:
+            hit = self._cache.get(key)
+            if hit and hit[0] >= _now():
+                return hit[1]
         resp = await self._request(url, params=params)
+        if 400 <= resp.status_code < 500:
+            req_url = str(resp.request.url) if getattr(resp, "request", None) else None
+            raise DPDHTTPError(resp.status_code, resp.text, url=req_url)
         try:
-            return resp.json()
+            data = resp.json()
+            if self._cache_ttl:
+                self._cache[key] = (_now() + self._cache_ttl, data)
+            return data
         except json.JSONDecodeError as exc:  # pragma: no cover
             raise DPDDecodeError("Failed to decode JSON response") from exc
 
@@ -141,3 +169,15 @@ async def _async_sleep(seconds: float) -> None:
 
     await asyncio.sleep(seconds)
 
+
+def _cache_key(url: str, params: dict[str, Any] | None) -> str:
+    if not params:
+        return url
+    parts = [f"{k}={params[k]}" for k in sorted(params.keys())]
+    return f"{url}?{'&'.join(parts)}"
+
+
+def _now() -> float:
+    import time
+
+    return time.time()

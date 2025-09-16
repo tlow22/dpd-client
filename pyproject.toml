@@ -1,6 +1,6 @@
 [project]
 name = "dpd-client"
-version = "0.1.0"
+version = "0.1.1"
 description = "Python client and CLI for Health Canada Drug Product Database (DPD) API"
 readme = "README.md"
 authors = [
@@ -39,6 +39,7 @@ ignore_missing_imports = true
 dev = [
     "mypy>=1.18.1",
     "pytest>=8.4.2",
+    "pytest-asyncio>=1.2.0",
     "pytest-cov>=7.0.0",
     "pytest-recording>=0.13.4",
     "respx>=0.22.0",
