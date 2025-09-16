@@ -39,8 +39,3 @@ After `uv run` or activating the venv, run:
 - `dpd veterinaryspecies --id 13755`
 
 Use `--lang fr` for French.
-
-## Status
-
-This is an early version covering core endpoints: `drugproduct`, `company`, `activeingredient`.
-More endpoints will be added next.

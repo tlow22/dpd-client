@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Any, Dict, Iterable, List, Sequence
+from typing import Any, Dict, List
 
 from .errors import DPDInvalidParam
 from .http import HTTPClient, AsyncHTTPClient
@@ -22,12 +22,12 @@ from .models import (
 BASE_URL = "https://health-products.canada.ca/api/drug/"
 
 
-def _normalize_list(data: Any) -> list[dict[str, Any]]:
+def _normalize_list(data: Any) -> List[Dict[str, Any]]:
     if data is None:
         return []
-    if isinstance(data, list):
-        return [x for x in data if isinstance(x, dict)]
-    if isinstance(data, dict):
+    if isinstance(data, List):
+        return [x for x in data if isinstance(x, Dict)]
+    if isinstance(data, Dict):
         # Some endpoints may return a single object
         return [data]
     return []
@@ -69,11 +69,11 @@ class DPDClient:
         brandname: str | None = None,
         status: str | None = None,
         lang: str | None = None,
-    ) -> list[DrugProduct]:
+    ) -> List[DrugProduct]:
         if not any([id, din, brandname, status]):
             # API supports listing all, but that can be huge; require at least one filter
             raise DPDInvalidParam("Provide at least one of id, din, brandname, or status")
-        params: dict[str, Any] = {"type": "json", "lang": lang or self.default_lang}
+        params: Dict[str, Any] = {"type": "json", "lang": lang or self.default_lang}
         if id is not None:
             params["id"] = id
         if din is not None:
@@ -85,8 +85,8 @@ class DPDClient:
         data = self._http.get_json("drugproduct/", params)
         return [DrugProduct.model_validate(obj) for obj in _normalize_list(data)]
 
-    def company(self, *, id: int, lang: str | None = None) -> list[Company]:
-        params: dict[str, Any] = {"id": id, "type": "json", "lang": lang or self.default_lang}
+    def company(self, *, id: int, lang: str | None = None) -> List[Company]:
+        params: Dict[str, Any] = {"id": id, "type": "json", "lang": lang or self.default_lang}
         data = self._http.get_json("company/", params)
         return [Company.model_validate(obj) for obj in _normalize_list(data)]
 
@@ -96,10 +96,10 @@ class DPDClient:
         id: int | None = None,
         ingredientname: str | None = None,
         lang: str | None = None,
-    ) -> list[ActiveIngredient]:
+    ) -> List[ActiveIngredient]:
         if id is None and ingredientname is None:
             raise DPDInvalidParam("Provide id or ingredientname for activeingredient")
-        params: dict[str, Any] = {"type": "json", "lang": lang or self.default_lang}
+        params: Dict[str, Any] = {"type": "json", "lang": lang or self.default_lang}
         if id is not None:
             params["id"] = id
         if ingredientname is not None:
@@ -107,49 +107,49 @@ class DPDClient:
         data = self._http.get_json("activeingredient/", params)
         return [ActiveIngredient.model_validate(obj) for obj in _normalize_list(data)]
 
-    def form(self, *, id: int, active: bool | None = None, lang: str | None = None) -> list[DosageForm]:
-        params: dict[str, Any] = {"id": id, "type": "json", "lang": lang or self.default_lang}
+    def form(self, *, id: int, active: bool | None = None, lang: str | None = None) -> List[DosageForm]:
+        params: Dict[str, Any] = {"id": id, "type": "json", "lang": lang or self.default_lang}
         if active:
             params["active"] = "yes"
         data = self._http.get_json("form/", params)
         return [DosageForm.model_validate(obj) for obj in _normalize_list(data)]
 
-    def packaging(self, *, id: int) -> list[Packaging]:
-        params: dict[str, Any] = {"id": id, "type": "json"}
+    def packaging(self, *, id: int) -> List[Packaging]:
+        params: Dict[str, Any] = {"id": id, "type": "json"}
         data = self._http.get_json("packaging/", params)
         return [Packaging.model_validate(obj) for obj in _normalize_list(data)]
 
-    def pharmaceuticalstd(self, *, id: int) -> list[PharmaceuticalStandard]:
-        params: dict[str, Any] = {"id": id, "type": "json"}
+    def pharmaceuticalstd(self, *, id: int) -> List[PharmaceuticalStandard]:
+        params: Dict[str, Any] = {"id": id, "type": "json"}
         data = self._http.get_json("pharmaceuticalstd/", params)
         return [PharmaceuticalStandard.model_validate(obj) for obj in _normalize_list(data)]
 
-    def route(self, *, id: int, active: bool | None = None, lang: str | None = None) -> list[RouteOfAdministration]:
-        params: dict[str, Any] = {"id": id, "type": "json", "lang": lang or self.default_lang}
+    def route(self, *, id: int, active: bool | None = None, lang: str | None = None) -> List[RouteOfAdministration]:
+        params: Dict[str, Any] = {"id": id, "type": "json", "lang": lang or self.default_lang}
         if active:
             params["active"] = "yes"
         data = self._http.get_json("route/", params)
         return [RouteOfAdministration.model_validate(obj) for obj in _normalize_list(data)]
 
-    def schedule(self, *, id: int, active: bool | None = None, lang: str | None = None) -> list[Schedule]:
-        params: dict[str, Any] = {"id": id, "type": "json", "lang": lang or self.default_lang}
+    def schedule(self, *, id: int, active: bool | None = None, lang: str | None = None) -> List[Schedule]:
+        params: Dict[str, Any] = {"id": id, "type": "json", "lang": lang or self.default_lang}
         if active:
             params["active"] = "yes"
         data = self._http.get_json("schedule/", params)
         return [Schedule.model_validate(obj) for obj in _normalize_list(data)]
 
-    def status(self, *, id: int, lang: str | None = None) -> list[ProductStatus]:
-        params: dict[str, Any] = {"id": id, "type": "json", "lang": lang or self.default_lang}
+    def status(self, *, id: int, lang: str | None = None) -> List[ProductStatus]:
+        params: Dict[str, Any] = {"id": id, "type": "json", "lang": lang or self.default_lang}
         data = self._http.get_json("status/", params)
         return [ProductStatus.model_validate(obj) for obj in _normalize_list(data)]
 
-    def therapeuticclass(self, *, id: int, lang: str | None = None) -> list[TherapeuticClass]:
-        params: dict[str, Any] = {"id": id, "type": "json", "lang": lang or self.default_lang}
+    def therapeuticclass(self, *, id: int, lang: str | None = None) -> List[TherapeuticClass]:
+        params: Dict[str, Any] = {"id": id, "type": "json", "lang": lang or self.default_lang}
         data = self._http.get_json("therapeuticclass/", params)
         return [TherapeuticClass.model_validate(obj) for obj in _normalize_list(data)]
 
-    def veterinaryspecies(self, *, id: int, lang: str | None = None) -> list[VeterinarySpecies]:
-        params: dict[str, Any] = {"id": id, "type": "json", "lang": lang or self.default_lang}
+    def veterinaryspecies(self, *, id: int, lang: str | None = None) -> List[VeterinarySpecies]:
+        params: Dict[str, Any] = {"id": id, "type": "json", "lang": lang or self.default_lang}
         data = self._http.get_json("veterinaryspecies/", params)
         return [VeterinarySpecies.model_validate(obj) for obj in _normalize_list(data)]
 
@@ -181,10 +181,10 @@ class AsyncDPDClient:
         brandname: str | None = None,
         status: str | None = None,
         lang: str | None = None,
-    ) -> list[DrugProduct]:
+    ) -> List[DrugProduct]:
         if not any([id, din, brandname, status]):
             raise DPDInvalidParam("Provide at least one of id, din, brandname, or status")
-        params: dict[str, Any] = {"type": "json", "lang": lang or self.default_lang}
+        params: Dict[str, Any] = {"type": "json", "lang": lang or self.default_lang}
         if id is not None:
             params["id"] = id
         if din is not None:
@@ -196,8 +196,8 @@ class AsyncDPDClient:
         data = await self._http.get_json("drugproduct/", params)
         return [DrugProduct.model_validate(obj) for obj in _normalize_list(data)]
 
-    async def company(self, *, id: int, lang: str | None = None) -> list[Company]:
-        params: dict[str, Any] = {"id": id, "type": "json", "lang": lang or self.default_lang}
+    async def company(self, *, id: int, lang: str | None = None) -> List[Company]:
+        params: Dict[str, Any] = {"id": id, "type": "json", "lang": lang or self.default_lang}
         data = await self._http.get_json("company/", params)
         return [Company.model_validate(obj) for obj in _normalize_list(data)]
 
@@ -207,10 +207,10 @@ class AsyncDPDClient:
         id: int | None = None,
         ingredientname: str | None = None,
         lang: str | None = None,
-    ) -> list[ActiveIngredient]:
+    ) -> List[ActiveIngredient]:
         if id is None and ingredientname is None:
             raise DPDInvalidParam("Provide id or ingredientname for activeingredient")
-        params: dict[str, Any] = {"type": "json", "lang": lang or self.default_lang}
+        params: Dict[str, Any] = {"type": "json", "lang": lang or self.default_lang}
         if id is not None:
             params["id"] = id
         if ingredientname is not None:
@@ -218,48 +218,48 @@ class AsyncDPDClient:
         data = await self._http.get_json("activeingredient/", params)
         return [ActiveIngredient.model_validate(obj) for obj in _normalize_list(data)]
 
-    async def form(self, *, id: int, active: bool | None = None, lang: str | None = None) -> list[DosageForm]:
-        params: dict[str, Any] = {"id": id, "type": "json", "lang": lang or self.default_lang}
+    async def form(self, *, id: int, active: bool | None = None, lang: str | None = None) -> List[DosageForm]:
+        params: Dict[str, Any] = {"id": id, "type": "json", "lang": lang or self.default_lang}
         if active:
             params["active"] = "yes"
         data = await self._http.get_json("form/", params)
         return [DosageForm.model_validate(obj) for obj in _normalize_list(data)]
 
-    async def packaging(self, *, id: int) -> list[Packaging]:
-        params: dict[str, Any] = {"id": id, "type": "json"}
+    async def packaging(self, *, id: int) -> List[Packaging]:
+        params: Dict[str, Any] = {"id": id, "type": "json"}
         data = await self._http.get_json("packaging/", params)
         return [Packaging.model_validate(obj) for obj in _normalize_list(data)]
 
-    async def pharmaceuticalstd(self, *, id: int) -> list[PharmaceuticalStandard]:
-        params: dict[str, Any] = {"id": id, "type": "json"}
+    async def pharmaceuticalstd(self, *, id: int) -> List[PharmaceuticalStandard]:
+        params: Dict[str, Any] = {"id": id, "type": "json"}
         data = await self._http.get_json("pharmaceuticalstd/", params)
         return [PharmaceuticalStandard.model_validate(obj) for obj in _normalize_list(data)]
 
-    async def route(self, *, id: int, active: bool | None = None, lang: str | None = None) -> list[RouteOfAdministration]:
-        params: dict[str, Any] = {"id": id, "type": "json", "lang": lang or self.default_lang}
+    async def route(self, *, id: int, active: bool | None = None, lang: str | None = None) -> List[RouteOfAdministration]:
+        params: Dict[str, Any] = {"id": id, "type": "json", "lang": lang or self.default_lang}
         if active:
             params["active"] = "yes"
         data = await self._http.get_json("route/", params)
         return [RouteOfAdministration.model_validate(obj) for obj in _normalize_list(data)]
 
-    async def schedule(self, *, id: int, active: bool | None = None, lang: str | None = None) -> list[Schedule]:
-        params: dict[str, Any] = {"id": id, "type": "json", "lang": lang or self.default_lang}
+    async def schedule(self, *, id: int, active: bool | None = None, lang: str | None = None) -> List[Schedule]:
+        params: Dict[str, Any] = {"id": id, "type": "json", "lang": lang or self.default_lang}
         if active:
             params["active"] = "yes"
         data = await self._http.get_json("schedule/", params)
         return [Schedule.model_validate(obj) for obj in _normalize_list(data)]
 
-    async def status(self, *, id: int, lang: str | None = None) -> list[ProductStatus]:
-        params: dict[str, Any] = {"id": id, "type": "json", "lang": lang or self.default_lang}
+    async def status(self, *, id: int, lang: str | None = None) -> List[ProductStatus]:
+        params: Dict[str, Any] = {"id": id, "type": "json", "lang": lang or self.default_lang}
         data = await self._http.get_json("status/", params)
         return [ProductStatus.model_validate(obj) for obj in _normalize_list(data)]
 
-    async def therapeuticclass(self, *, id: int, lang: str | None = None) -> list[TherapeuticClass]:
-        params: dict[str, Any] = {"id": id, "type": "json", "lang": lang or self.default_lang}
+    async def therapeuticclass(self, *, id: int, lang: str | None = None) -> List[TherapeuticClass]:
+        params: Dict[str, Any] = {"id": id, "type": "json", "lang": lang or self.default_lang}
         data = await self._http.get_json("therapeuticclass/", params)
         return [TherapeuticClass.model_validate(obj) for obj in _normalize_list(data)]
 
-    async def veterinaryspecies(self, *, id: int, lang: str | None = None) -> list[VeterinarySpecies]:
-        params: dict[str, Any] = {"id": id, "type": "json", "lang": lang or self.default_lang}
+    async def veterinaryspecies(self, *, id: int, lang: str | None = None) -> List[VeterinarySpecies]:
+        params: Dict[str, Any] = {"id": id, "type": "json", "lang": lang or self.default_lang}
         data = await self._http.get_json("veterinaryspecies/", params)
         return [VeterinarySpecies.model_validate(obj) for obj in _normalize_list(data)]
