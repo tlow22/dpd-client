@@ -1,11 +1,22 @@
 # dpd-client
 
-Python client and CLI for Health Canada Drug Product Database (DPD) (API)[https://health-products.canada.ca/api/documentation/dpd-documentation-en.html].
+Python client and CLI for Health Canada Drug Product Database (DPD) API.
+Docs: https://health-products.canada.ca/api/documentation/dpd-documentation-en.html
 
-## Quickstart
+This README is split into a User Guide and a Developer Guide.
 
-- Install dependencies with `uv` (created `.venv`):
+**User Guide**
 
+- Install with `uv` and use the client/CLI.
+- Understand retries, caching, endpoints, and examples.
+
+**Developer Guide**
+
+- Project layout, internal helpers, testing, and workflows.
+
+**User Guide**
+
+- Install dependencies (creates `.venv`):
   - `uv sync`
 
 - Example (sync client):
@@ -43,7 +54,7 @@ if __name__ == "__main__":
     asyncio.run(main())
 ```
 
-## CLI
+**CLI**
 
 After `uv run` or activating the venv, run:
 
@@ -61,7 +72,7 @@ After `uv run` or activating the venv, run:
 
 Use `--lang fr` for French.
 
-## Caching and Retries
+**Caching and Retries**
 
 - Caching: pass `cache_ttl` (seconds) to `DPDClient` or `AsyncDPDClient` to enable in-memory caching per request URL + params.
   - Example: `DPDClient(cache_ttl=60)` caches results for 60 seconds.
@@ -69,26 +80,65 @@ Use `--lang fr` for French.
   - `4xx` (client errors) raise `DPDHTTPError` without retry.
   - Invalid/malformed JSON raises `DPDDecodeError`.
 
-## Tests
+**Status**
+
+- Implemented endpoints: `drugproduct`, `company`, `activeingredient`, `form`, `route`, `schedule`, `status`, `packaging`, `pharmaceuticalstd`, `therapeuticclass`, `veterinaryspecies`.
+- Do not publish yet; more testing and validation are planned.
+
+**Developer Guide**
+
+**Tests**
 
 - Run test suite:
   - `uv run pytest -q`
 - What’s covered:
-  - Core client behavior: parameter validation, list normalization, error mapping.
-  - Retry logic on transient `5xx` responses.
+  - Parameter validation, list normalization, and error mapping.
+  - Retry logic for transient `5xx` responses.
   - Caching prevents redundant requests for identical calls.
   - Async client parity using `pytest-asyncio`.
 - How tests work:
   - HTTP calls are mocked with `respx` over `httpx`; no live network calls.
   - Add new tests under `tests/` following existing patterns.
 
-## Status
+**Project Layout**
 
-- Implemented endpoints: `drugproduct`, `company`, `activeingredient`, `form`, `route`, `schedule`, `status`, `packaging`, `pharmaceuticalstd`, `therapeuticclass`, `veterinaryspecies`.
-- Do not publish yet; more testing and validation are planned.
+```
+.
+├── AGENTS.md                  # Agent conventions (tooling, testing, release policy)
+├── CHANGELOG.md               # Notable changes and versions
+├── LICENSE                    # MIT license
+├── README.md                  # This document (User & Developer guides)
+├── pyproject.toml             # Project metadata, deps, scripts, tool configs
+├── src/
+│   └── dpd_client/
+│       ├── __init__.py        # Public exports (clients, models, errors)
+│       ├── cli.py             # Typer CLI entry (subcommands per endpoint)
+│       ├── client.py          # Sync & async clients (use shared param helpers)
+│       ├── errors.py          # Exception types (DPDError, DPDHTTPError, ...)
+│       ├── http.py            # HTTP helpers (httpx, retries, caching)
+│       ├── models.py          # Pydantic models per resource
+│       ├── params.py          # Internal helpers to build/validate query params
+│       └── py.typed           # PEP 561 typing marker
+└── tests/
+    ├── test_client.py                 # Core client behavior
+    ├── test_more_endpoints.py         # Additional endpoints & params
+    └── test_caching_and_errors.py     # Caching, retries, errors, async basic
+```
 
-## Development
+**File Notes**
 
-- Manage dependencies and workflows with `uv`.
-- See `CHANGELOG.md` for notable changes; version is in `pyproject.toml`.
-- Lint/type: `ruff`, `mypy`. Run `uv run ruff check .` and `uv run mypy .` if desired.
+- `src/dpd_client/http.py`: wraps `httpx` with retries/backoff, JSON parsing, and optional TTL cache.
+- `src/dpd_client/models.py`: Pydantic v2 models for each API object, extra fields allowed.
+- `src/dpd_client/client.py`: `DPDClient` and `AsyncDPDClient`; methods return lists of models.
+- `src/dpd_client/params.py`: shared param builders; keeps sync/async signatures DRY and validated.
+- `src/dpd_client/cli.py`: Typer commands that mirror client methods; pretty JSON output.
+- `src/dpd_client/errors.py`: exceptions (`DPDError`, `DPDHTTPError`, `DPDDecodeError`, `DPDInvalidParam`).
+
+**Tooling & Workflows**
+
+- Manage dependencies and commands with `uv`.
+- Lint/type (optional):
+  - `uv run ruff check .`
+  - `uv run mypy .`
+- See `CHANGELOG.md` for notable changes; version is tracked in `pyproject.toml`.
+- Do not publish yet; additional testing will be performed first.
