@@ -19,4 +19,3 @@ All notable changes to this project will be documented in this file.
 - Implement core HTTP layer with retries and JSON parsing.
 - Implement models and client methods for: drugproduct, company, activeingredient.
 - Add initial CLI and basic unit tests.
-
