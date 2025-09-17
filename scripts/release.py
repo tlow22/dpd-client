@@ -24,6 +24,8 @@ if sys.version_info >= (3, 11):
 else:  # Python < 3.11
     import tomli as toml_reader
 
+from dotenv import load_dotenv
+
 _toml_writer_module: ModuleType | None
 try:
     import tomli_w as _toml_writer_module
@@ -95,6 +97,7 @@ def parse_args() -> argparse.Namespace:
 def main() -> int:
     args = parse_args()
     try:
+        load_dotenv()
         ensure_clean_git()
         current_version = read_version()
         if args.version:

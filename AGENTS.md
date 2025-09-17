@@ -19,7 +19,7 @@ Project approach and conventions
   - Maintain `CHANGELOG.md` for every substantive change.
   - Update version in `pyproject.toml` when preparing a release; keep entries concise and dated.
   - Do not publish without explicit approval.
-  - Use `uv run python scripts/release.py [--version X.Y.Z] [--publish]` to run the release checklist (lint, type-check, tests, build, publish).
+  - Use `uv run python scripts/release.py [--version X.Y.Z] [--publish]` to run the release checklist (loads `.env`, lint, type-check, tests, build, publish).
 
 - General
   - Keep changes minimal and focused on the task.

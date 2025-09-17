@@ -139,7 +139,7 @@ uv run python scripts/release.py --version 0.2.0      # run checks and build
 uv run python scripts/release.py --version 0.2.0 --publish  # publish via uv
 ```
 
-The script verifies a clean git tree, runs linting/type checks/tests, builds distributions, and (optionally) uploads to PyPI using your configured credentials.
+The script verifies a clean git tree, loads environment variables from `.env` via `python-dotenv`, runs linting/type checks/tests, builds distributions, and (optionally) uploads to PyPI using your configured credentials.
 
 ### Project Structure
 

@@ -37,6 +37,7 @@ ignore_missing_imports = true
 
 [dependency-groups]
 dev = [
+    "python-dotenv>=1.0.1",
     "mypy>=1.18.1",
     "pytest>=8.4.2",
     "pytest-asyncio>=1.2.0",
