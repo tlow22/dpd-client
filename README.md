@@ -130,6 +130,17 @@ uv run ruff check .    # Linting
 uv run mypy .          # Type checking
 ```
 
+### Release Workflow
+
+The repository includes a helper script for repeatable releases:
+
+```bash
+uv run python scripts/release.py --version 0.2.0      # run checks and build
+uv run python scripts/release.py --version 0.2.0 --publish  # publish via uv
+```
+
+The script verifies a clean git tree, runs linting/type checks/tests, builds distributions, and (optionally) uploads to PyPI using your configured credentials.
+
 ### Project Structure
 
 ```
