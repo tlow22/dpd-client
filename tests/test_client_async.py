@@ -1,3 +1,5 @@
+from collections.abc import AsyncGenerator
+
 import httpx
 import pytest
 import pytest_asyncio
@@ -116,7 +118,7 @@ ASYNC_ENDPOINT_CASES = [
 
 
 @pytest_asyncio.fixture()
-async def async_client() -> AsyncDPDClient:
+async def async_client() -> AsyncGenerator[AsyncDPDClient, None]:
     instance = AsyncDPDClient()
     try:
         yield instance

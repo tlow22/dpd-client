@@ -9,7 +9,7 @@ from tenacity import retry, stop_after_attempt, wait_exponential_jitter, retry_i
 from .errors import DPDHTTPError, DPDDecodeError
 
 
-Retryable = (httpx.ConnectError, httpx.ReadError, httpx.RemoteProtocolError, httpx.PoolTimeout)  # type: ignore[attr-defined]
+Retryable = (httpx.ConnectError, httpx.ReadError, httpx.RemoteProtocolError, httpx.PoolTimeout)
 
 
 def _is_retryable_exception(exc: BaseException) -> bool:
@@ -132,7 +132,13 @@ class AsyncHTTPClient:
                 if resp.status_code == 429 or 500 <= resp.status_code < 600:
                     resp.raise_for_status()
                 return resp
-            except (httpx.ConnectError, httpx.ReadError, httpx.RemoteProtocolError, httpx.PoolTimeout, httpx.HTTPStatusError) as exc:  # type: ignore[attr-defined]
+            except (
+                httpx.ConnectError,
+                httpx.ReadError,
+                httpx.RemoteProtocolError,
+                httpx.PoolTimeout,
+                httpx.HTTPStatusError,
+            ) as exc:
                 last_exc = exc
                 attempts += 1
                 # exponential backoff with jitter

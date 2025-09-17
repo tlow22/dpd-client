@@ -1,3 +1,5 @@
+from collections.abc import Generator
+
 import httpx
 import pytest
 import respx
@@ -115,7 +117,7 @@ SYNC_ENDPOINT_CASES = [
 
 
 @pytest.fixture()
-def client() -> DPDClient:
+def client() -> Generator[DPDClient, None, None]:
     instance = DPDClient()
     yield instance
     instance.close()
