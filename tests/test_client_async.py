@@ -9,7 +9,7 @@ from dpd_client.client import BASE_URL
 
 ASYNC_ENDPOINT_CASES = [
     (
-        "drugproduct",
+        "drug_product",
         "drugproduct/",
         {"din": "00326925"},
         {"drug_code": 2049, "brand_name": "SINEQUAN"},
@@ -27,7 +27,7 @@ ASYNC_ENDPOINT_CASES = [
         True,
     ),
     (
-        "activeingredient",
+        "active_ingredient",
         "activeingredient/",
         {"ingredientname": "acetaminophen"},
         [{"drug_code": 22, "ingredient_name": "Acetaminophen"}],
@@ -59,7 +59,7 @@ ASYNC_ENDPOINT_CASES = [
         False,
     ),
     (
-        "pharmaceuticalstd",
+        "pharmaceutical_std",
         "pharmaceuticalstd/",
         {"id": 10},
         {"drug_code": 10, "pharmaceutical_std": "USP"},
@@ -95,7 +95,7 @@ ASYNC_ENDPOINT_CASES = [
         True,
     ),
     (
-        "therapeuticclass",
+        "therapeutic_class",
         "therapeuticclass/",
         {"id": 7},
         [{"drug_code": 7, "tc_ahfs": "Antidepressants"}],
@@ -104,7 +104,7 @@ ASYNC_ENDPOINT_CASES = [
         True,
     ),
     (
-        "veterinaryspecies",
+        "veterinary_species",
         "veterinaryspecies/",
         {"id": 3},
         [{"drug_code": 3, "vet_species_name": "Canine"}],

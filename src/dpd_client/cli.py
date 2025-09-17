@@ -27,7 +27,7 @@ def drugproduct(
 ):
     client = _client(lang)
     try:
-        items = client.drugproduct(id=id, din=din, brandname=brandname, status=status, lang=lang)
+        items = client.drug_product(id=id, din=din, brandname=brandname, status=status, lang=lang)
         data = [item.model_dump() for item in items]
         if pretty:
             print_json(data=data)
@@ -64,7 +64,7 @@ def activeingredient(
 ):
     client = _client(lang)
     try:
-        items = client.activeingredient(id=id, ingredientname=ingredientname, lang=lang)
+        items = client.active_ingredient(id=id, ingredientname=ingredientname, lang=lang)
         data = [item.model_dump() for item in items]
         if pretty:
             print_json(data=data)
@@ -173,7 +173,7 @@ def pharmaceuticalstd(
 ):
     client = _client("en")
     try:
-        items = client.pharmaceuticalstd(id=id)
+        items = client.pharmaceutical_std(id=id)
         data = [item.model_dump() for item in items]
         if pretty:
             print_json(data=data)
@@ -191,7 +191,7 @@ def therapeuticclass(
 ):
     client = _client(lang)
     try:
-        items = client.therapeuticclass(id=id, lang=lang)
+        items = client.therapeutic_class(id=id, lang=lang)
         data = [item.model_dump() for item in items]
         if pretty:
             print_json(data=data)
@@ -209,7 +209,7 @@ def veterinaryspecies(
 ):
     client = _client(lang)
     try:
-        items = client.veterinaryspecies(id=id, lang=lang)
+        items = client.veterinary_species(id=id, lang=lang)
         data = [item.model_dump() for item in items]
         if pretty:
             print_json(data=data)

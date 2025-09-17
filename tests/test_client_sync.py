@@ -8,7 +8,7 @@ from dpd_client.client import BASE_URL
 
 SYNC_ENDPOINT_CASES = [
     (
-        "drugproduct",
+        "drug_product",
         "drugproduct/",
         {"din": "00326925"},
         {"drug_code": 2049, "brand_name": "SINEQUAN"},
@@ -26,7 +26,7 @@ SYNC_ENDPOINT_CASES = [
         True,
     ),
     (
-        "activeingredient",
+        "active_ingredient",
         "activeingredient/",
         {"ingredientname": "acetaminophen"},
         [{"drug_code": 22, "ingredient_name": "Acetaminophen"}],
@@ -58,7 +58,7 @@ SYNC_ENDPOINT_CASES = [
         False,
     ),
     (
-        "pharmaceuticalstd",
+        "pharmaceutical_std",
         "pharmaceuticalstd/",
         {"id": 10},
         {"drug_code": 10, "pharmaceutical_std": "USP"},
@@ -94,7 +94,7 @@ SYNC_ENDPOINT_CASES = [
         True,
     ),
     (
-        "therapeuticclass",
+        "therapeutic_class",
         "therapeuticclass/",
         {"id": 7},
         [{"drug_code": 7, "tc_ahfs": "Antidepressants"}],
@@ -103,7 +103,7 @@ SYNC_ENDPOINT_CASES = [
         True,
     ),
     (
-        "veterinaryspecies",
+        "veterinary_species",
         "veterinaryspecies/",
         {"id": 3},
         [{"drug_code": 3, "vet_species_name": "Canine"}],
@@ -153,14 +153,14 @@ def test_sync_endpoints_return_models_and_expected_query_params(
         assert "lang" not in params
 
 
-def test_drugproduct_requires_filter(client: DPDClient) -> None:
+def test_drug_product_requires_filter(client: DPDClient) -> None:
     with pytest.raises(DPDInvalidParam):
-        client.drugproduct()
+        client.drug_product()
 
 
-def test_activeingredient_requires_filter(client: DPDClient) -> None:
+def test_active_ingredient_requires_filter(client: DPDClient) -> None:
     with pytest.raises(DPDInvalidParam):
-        client.activeingredient()
+        client.active_ingredient()
 
 
 @pytest.mark.parametrize(
@@ -199,8 +199,8 @@ def test_sync_caching_prevents_second_request() -> None:
 
     client = DPDClient(cache_ttl=60)
     try:
-        first = client.drugproduct(din="00000000")
-        second = client.drugproduct(din="00000000")
+        first = client.drug_product(din="00000000")
+        second = client.drug_product(din="00000000")
     finally:
         client.close()
 
@@ -216,7 +216,7 @@ def test_sync_404_raises_http_error() -> None:
     client = DPDClient()
     try:
         with pytest.raises(DPDHTTPError):
-            client.drugproduct(din="does-not-exist")
+            client.drug_product(din="does-not-exist")
     finally:
         client.close()
 
@@ -228,7 +228,7 @@ def test_sync_decode_error() -> None:
     client = DPDClient()
     try:
         with pytest.raises(DPDDecodeError):
-            client.drugproduct(din="12345678")
+            client.drug_product(din="12345678")
     finally:
         client.close()
 
@@ -244,7 +244,7 @@ def test_sync_retries_on_5xx_then_succeeds() -> None:
 
     client = DPDClient(retries=3)
     try:
-        items = client.drugproduct(din="11111111")
+        items = client.drug_product(din="11111111")
     finally:
         client.close()
 
