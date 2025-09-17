@@ -21,7 +21,7 @@ from dpd_client import DPDClient
 
 client = DPDClient()
 try:
-    products = client.drugproduct(din="00326925")
+    products = client.drug_product(din="00326925")
     for p in products:
         print(p.brand_name, p.drug_identification_number)
 finally:
@@ -37,7 +37,7 @@ from dpd_client import AsyncDPDClient
 async def main() -> None:
     client = AsyncDPDClient()
     try:
-        products = await client.drugproduct(din="00326925")
+        products = await client.drug_product(din="00326925")
         for p in products:
             print(p.brand_name, p.drug_identification_number)
     finally:
@@ -47,12 +47,19 @@ if __name__ == "__main__":
     asyncio.run(main())
 ```
 
+Example scripts are available in `examples/`:
+
+```bash
+uv run python examples/sync_drug_product.py
+uv run python examples/async_drug_product.py
+```
+
 ## Command Line Interface
 
 After `uv run` or activating the venv:
 
 ```bash
-# Drug products
+# Drug products (defaults to JSON output)
 dpd drugproduct --din 00326925
 
 # Other endpoints
@@ -89,17 +96,17 @@ client = DPDClient(cache_ttl=60)  # Cache for 60 seconds
 
 ### Available Endpoints
 
-- `drugproduct` - Drug product information
+- `drug_product` - Drug product information
 - `company` - Pharmaceutical companies
-- `activeingredient` - Active ingredients
+- `active_ingredient` - Active ingredients
 - `form` - Dosage forms
 - `route` - Administration routes
 - `schedule` - Drug schedules
 - `status` - Product statuses
 - `packaging` - Packaging information
-- `pharmaceuticalstd` - Pharmaceutical standards
-- `therapeuticclass` - Therapeutic classifications
-- `veterinaryspecies` - Veterinary species
+- `pharmaceutical_std` - Pharmaceutical standards
+- `therapeutic_class` - Therapeutic classifications
+- `veterinary_species` - Veterinary species
 
 ## Development
 
