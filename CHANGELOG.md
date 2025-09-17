@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.2.0] - 2025-09-16
+- API endpoints are snakecase
+- add docs 
+- test standardization for all endpoints 
+
 ## [0.1.1] - 2025-09-16
 - Add all remaining DPD endpoints: form, packaging, pharmaceuticalstd, route, schedule, status, therapeuticclass, veterinaryspecies.
 - Add Typer CLI subcommands for each endpoint.
