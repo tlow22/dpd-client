@@ -41,14 +41,23 @@ class ReleaseError(RuntimeError):
     pass
 
 
-def run(cmd: list[str], *, check: bool = True) -> subprocess.CompletedProcess[str]:
+def run(
+    cmd: list[str], *, check: bool = True, capture_output: bool = False
+) -> subprocess.CompletedProcess[str]:
     print(f":: {' '.join(cmd)}")
-    return subprocess.run(cmd, cwd=REPO_ROOT, check=check, text=True)
+    return subprocess.run(
+        cmd,
+        cwd=REPO_ROOT,
+        check=check,
+        text=True,
+        stdout=subprocess.PIPE if capture_output else None,
+        stderr=subprocess.PIPE if capture_output else None,
+    )
 
 
 def ensure_clean_git() -> None:
-    result = run(["git", "status", "--short"], check=False)
-    if result.stdout.strip():
+    result = run(["git", "status", "--short"], check=False, capture_output=True)
+    if result.stdout and result.stdout.strip():
         raise ReleaseError("Working tree is dirty; commit or stash changes before releasing.")
 
 
