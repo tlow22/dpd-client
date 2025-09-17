@@ -4,7 +4,7 @@ version = "0.2.0"
 description = "Python client and CLI for Health Canada Drug Product Database (DPD) API"
 readme = "README.md"
 authors = [
-    { name = "tlow22", email = "thaddeuslow@outlook.com" }
+    { name = "tlow22", email = "thaddeuslow@outlook.com" },
 ]
 requires-python = ">=3.9"
 dependencies = [
@@ -15,12 +15,14 @@ dependencies = [
     "typer>=0.17.4",
 ]
 
-[build-system]
-requires = ["hatchling"]
-build-backend = "hatchling.build"
-
 [project.scripts]
 dpd = "dpd_client.cli:app"
+
+[build-system]
+requires = [
+    "hatchling",
+]
+build-backend = "hatchling.build"
 
 [tool.ruff]
 line-length = 100
