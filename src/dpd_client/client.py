@@ -17,7 +17,6 @@ from .models import (
     VeterinarySpecies,
 )
 from .params import (
-    base_params as _base_params,
     params_with_id_lang as _params_with_id_lang,
     params_with_id_lang_active as _params_with_id_lang_active,
     params_packaging as _params_packaging,
